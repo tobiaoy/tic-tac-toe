@@ -2,20 +2,21 @@
 const player = (sign) => {
     const getSign  = () => {return sign}
     let played = false; // for when someone has just played a move
+    let score = 0;
+    
+    const playSign = (position) => {
 
-    const playSign = (sign, position) => {
-        sign = getSign();
-
-        if (position.textContent === '' && played === false){
-            position.textContent = sign;
+        if ((position.innerHTML === '' || position.innerHTML === undefined) && played === false){
+            position.innerHTML = getSign();
+            //played = true;
         } else {
             return;
         }
 
-        played = true
+        
     }
 
-    return {playSign, played}
+    return {playSign, played, score}
 }
 
 //create two players
@@ -40,29 +41,11 @@ const gameController = (() => {
             }
         }
 
-        frame.classList.add('frame');
+        frame.setAttribute('id', 'frame');
 
         return {frame, boardArr}
     })()
-
-    //turns -> to be changed after the click has happened
-    if (player1.played === true && player2.played === false){
-        currentPlayer = player2;
-    }
-
-    if (player2.played === true && player1.played === false){
-        currentPlayer = player1;
-    }
-
-    if (checkWinner.isWinner){
-       endGame();
-    }
-
-    function endGame(){
-        player1.played = true;
-        player2.played = true;
-        currentPlayer = '';
-    }
+  
     
     //winner check
     const checkWinner = (() => {
@@ -75,7 +58,7 @@ const gameController = (() => {
     //horizontal win check
     for (let i = 0; i < 3; i++){
         for (let j = 0; j < 3; j++){
-            if(gameBoard.boardArr[i][j].textContent !== ''){
+            if(gameBoard.boardArr[i][j].textContent !== '' && gameBoard.boardArr[1][1].textContent !== undefined){
                 if (gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i][j+1].textContent && 
                     gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i][j+2].textContent)
                     horizontalWin = true;
@@ -87,7 +70,7 @@ const gameController = (() => {
     //vertical win check
     for (let i = 0; i < 3; i++){
         for (let j = 0; j < 3; j++){
-            if(gameBoard.boardArr[i][j].textContent !== ''){
+            if(gameBoard.boardArr[i][j].textContent !== '' && gameBoard.boardArr[1][1].textContent !== undefined){
                 if (gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i+1][j].textContent && 
                     gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i+2][j].textContent)
                     verticalWin = true;
@@ -97,7 +80,7 @@ const gameController = (() => {
     }
 
     //diagonal win check
-    if (gameBoard.boardArr[1][1].textContent !== ''){
+    if (gameBoard.boardArr[1][1].textContent !== '' && gameBoard.boardArr[1][1].textContent !== undefined){
         if ((gameBoard.boardArr[0][0].textContent === gameBoard.boardArr[1][1].textContent && 
             gameBoard.boardArr[1][1].textContent === gameBoard.boardArr[2][2].textContent) || 
             (gameBoard.boardArr[0][2].textContent === gameBoard.boardArr[1][1].textContent && 
@@ -113,74 +96,125 @@ const gameController = (() => {
     return {isWinner, roundWinner}
 })()
 
-    //display controller
-    const displayController = (() => {
+    //turns -> to be changed after the click has happened
+    /*
+        if (player1.played === true && player2.played === false){
+            currentPlayer = player2;
+        }
     
-        const displayBoard = document.querySelector('#game-board'); //display version of the game board
-        const currPlayer = document.querySelector('#curr-player'); //displays the current player
-        const playerOneScore = document.querySelector('.player1-score'); //displays player 1's score
-        const playerTwoScore = document.querySelector('.player2-score'); //displays player 2's score
-
-        //figure out how to render the board and have it show updates when plays happen
-        const renderBoard = (() => {
-            displayBoard.appendChild(gameBoard.frame);
-        })();
-
-        //add event listeners to cells
-        for (let i = 0; i < 3; i++){
-            for (let j = 0; j < 3; j++){
-
-                gameBoard.boardArr[i][j].addEventListener('click', (e) => {
-                    currentPlayer.playSign(position = e.target);
-
-                    if (currentPlayer === player1){
-                        player1.played = true;
-                        player2.played = false;
-                    } else {
-                        player2.played = true;
-                        player1.played = false;
-                    }
-
-                    if (checkWinner.isWinner){
-                        //end game
-                        endGame();
-                        
-                        //display winner
-                        displayWinner();
-                    }
-                })
-            }
+        if (player2.played === true && player1.played === false){
+            currentPlayer = player1;
+        } */
+    
+    
+        function endGame(){
+            player1.played = true;
+            player2.played = true;
+            currentPlayer = '';
         }
 
-        const displayWinner = () => {
-            let winDisplay = document.createElement('div');
-            winDisplay.setAttribute(id, 'win-display');
-            
-            let winOverlay = document.createElement('div');
-            winOverlay.setAttribute(id, 'win-overlay')
-            
-            let winMessage = document.createElement('p');
-            winMessage.textContent = `${currentPlayer} wins the round`;
-            
-            let restartBtn = document.createElement('button');
-            restartBtn.textContent = 'Restart'
-            
-            let quitBtn = document.createElement('button');
-            quitBtn.textContent = 'Quit'
 
-            let btnSet = document.createElement('div');
-            btnSet.setAttribute(id, 'winner-btn-set')
+    return {
+        gameBoard,
+        endGame,
+        currentPlayer,
+        checkWinner
 
-            btnSet.appendChild(restartBtn)
-            btnSet.appendChild(quitBtn)
+    }
 
-            winOverlay.appendChild(btnSet)
-            winOverlay.appendChild(winMessage)
-            winDisplay.appendChild(winOverlay)
-        }
-        
+})();
 
+//display controller
+const displayController = (() => {
+    
+    const displayBoard = document.querySelector('#game-board'); //display version of the game board
+    document.querySelector('#curr-player').textContent = `current player: ${gameController.currentPlayer}`; //displays the current player
+    const playerOneScore = document.querySelector('.player1-score'); //displays player 1's score
+    const playerTwoScore = document.querySelector('.player2-score'); //displays player 2's score
+
+    //figure out how to render the board and have it show updates when plays happen
+    const renderBoard = (() => {
+        displayBoard.appendChild(gameController.gameBoard.frame);
     })();
 
+    //add event listeners to cells
+    for (let i = 0; i < 3; i++){
+        for (let j = 0; j < 3; j++){
+
+            gameController.gameBoard.boardArr[i][j].addEventListener('click', (e) => {
+                gameController.currentPlayer.playSign(e.target);
+                
+
+                if (gameController.currentPlayer === player1){
+                    player1.played = true;
+                    player2.played = false;
+                    gameController.currentPlayer = player2;
+
+                } else if (gameController.currentPlayer === player2)  {
+                    player2.played = true;
+                    player1.played = false;
+                    gameController.currentPlayer = player1;
+                }
+
+                console.log(gameController.currentPlayer);
+                
+
+                if (gameController.checkWinner.isWinner){
+                    gameController.currentPlayer.score += 1;
+
+                    if (gameController.currentPlayer == player1){
+                        playerOneScore.textContent = gameController.currentPlayer.score;
+                    }
+
+                    if (currentPlayer == player2){
+                        playerTwoScore.textContent = gameController.currentPlayer.score;
+                    }
+                    
+                    //end game
+                    gameController.endGame();
+                    
+                    //display winner
+                    displayWinner();
+                }
+            })
+        }
+    }
+
+    const displayWinner = () => {
+        let winDisplay = document.createElement('div');
+        winDisplay.setAttribute(id, 'win-display');
+        
+        let winOverlay = document.createElement('div');
+        winOverlay.setAttribute(id, 'win-overlay')
+        
+        let winMessage = document.createElement('p');
+        winMessage.textContent = `${gameController.currentPlayer} wins the round`;
+        
+        let restartBtn = document.createElement('button');
+        restartBtn.textContent = 'Restart'
+        
+        let quitBtn = document.createElement('button');
+        quitBtn.textContent = 'Quit'
+
+        let btnSet = document.createElement('div');
+        btnSet.setAttribute(id, 'winner-btn-set')
+
+        btnSet.appendChild(restartBtn)
+        btnSet.appendChild(quitBtn)
+
+        winOverlay.appendChild(btnSet)
+        winOverlay.appendChild(winMessage)
+        winDisplay.appendChild(winOverlay)
+
+        if (!checkWinner.isWinner){
+            winOverlay.style.display = none;
+        }
+    }
+
+    return {
+        displayBoard,
+        renderBoard
+    }
+    
 
 })();
