@@ -49,33 +49,46 @@ const gameController = (() => {
     
     //winner check
     const checkWinner = (() => {
-    let roundWinner;
 
     let horizontalWin = false;
     let verticalWin = false;
     let diagonalWin = false;
+    let isWinner = false;
+    let roundWinner;
     
     //horizontal win check
-    for (let i = 0; i < 3; i++){
-        for (let j = 0; j < 3; j++){
-            if(gameBoard.boardArr[i][j].textContent !== '' && gameBoard.boardArr[1][1].textContent !== undefined){
-                if (gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i][j+1].textContent && 
-                    gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i][j+2].textContent)
-                    horizontalWin = true;
-                    roundWinner = gameBoard.boardArr[i][j].textContent;
-            }
+    if (gameBoard.boardArr[0][0].textContent !== '' && gameBoard.boardArr[0][0].textContent !== undefined) {
+        if (gameBoard.boardArr[0][0].textContent === gameBoard.boardArr[0][1].textContent && gameBoard.boardArr[0][1].textContent === gameBoard.boardArr[0][2].textContent) {
+            horizontalWin = true
+            roundWinner = gameBoard.boardArr[0][0].textContent;
+        }
+    } else if (gameBoard.boardArr[1][0].textContent !== '' && gameBoard.boardArr[1][0].textContent !== undefined){
+        if (gameBoard.boardArr[1][0].textContent === gameBoard.boardArr[1][1].textContent && gameBoard.boardArr[1][1].textContent === gameBoard.boardArr[1][2].textContent) {
+            horizontalWin = true
+            roundWinner = gameBoard.boardArr[1][0].textContent;
+        }
+    } else if (gameBoard.boardArr[2][0].textContent !== '' && gameBoard.boardArr[2][0].textContent !== undefined){
+        if (gameBoard.boardArr[2][0].textContent === gameBoard.boardArr[2][1].textContent && gameBoard.boardArr[2][1].textContent === gameBoard.boardArr[2][2].textContent){
+            horizontalWin = true
+            roundWinner = gameBoard.boardArr[2][0].textContent;
         }
     }
 
     //vertical win check
-    for (let i = 0; i < 3; i++){
-        for (let j = 0; j < 3; j++){
-            if(gameBoard.boardArr[i][j].textContent !== '' && gameBoard.boardArr[1][1].textContent !== undefined){
-                if (gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i+1][j].textContent && 
-                    gameBoard.boardArr[i][j].textContent === gameBoard.boardArr[i+2][j].textContent)
-                    verticalWin = true;
-                    roundWinner = gameBoard.boardArr[i][j].textContent;
-            }
+    if (gameBoard.boardArr[0][0].textContent !== '' && gameBoard.boardArr[0][0].textContent !== undefined){
+        if (gameBoard.boardArr[0][0].textContent === gameBoard.boardArr[1][0].textContent && gameBoard.boardArr[1][0].textContent === gameBoard.boardArr[2][0].textContent){
+            verticalWin = true;
+            roundWinner = gameBoard.boardArr[0][0].textContent;
+        }
+    } else if (gameBoard.boardArr[0][1].textContent !== '' && gameBoard.boardArr[0][1].textContent !== undefined){
+        if (gameBoard.boardArr[0][1].textContent === gameBoard.boardArr[1][1].textContent && gameBoard.boardArr[1][1].textContent === gameBoard.boardArr[2][1].textContent){
+            verticalWin = true;
+            roundWinner = gameBoard.boardArr[0][1].textContent;
+        }
+    } else if (gameBoard.boardArr[0][2].textContent !== '' && gameBoard.boardArr[0][2].textContent !== undefined){
+        if (gameBoard.boardArr[0][2].textContent === gameBoard.boardArr[1][2].textContent && gameBoard.boardArr[1][2].textContent === gameBoard.boardArr[2][2].textContent){
+            verticalWin = true;
+            roundWinner = gameBoard.boardArr[0][2].textContent;
         }
     }
 
@@ -86,31 +99,29 @@ const gameController = (() => {
             (gameBoard.boardArr[0][2].textContent === gameBoard.boardArr[1][1].textContent && 
             gameBoard.boardArr[2][0].textContent === gameBoard.boardArr[1][1].textContent)){
             diagonalWin = true;
-            roundWinner = gameBoard[1][1].textContent;
+            roundWinner = gameBoard.boardArr[1][1].textContent;
         }
     }
 
     //check if there is a winner at all
-    let isWinner = horizontalWin ? true : verticalWin ? true : diagonalWin ? true : false;
+    //let isWinner = horizontalWin ? true : verticalWin ? true : diagonalWin ? true : false;
 
-    return {isWinner, roundWinner}
+    if (horizontalWin){ 
+        isWinner = true 
+    }  else if (verticalWin) { 
+        isWinner = true 
+    } else if (diagonalWin) { 
+        isWinner = true 
+    }
+  
+
+    return {isWinner, roundWinner, horizontalWin}
 })()
-
-    //turns -> to be changed after the click has happened
-    /*
-        if (player1.played === true && player2.played === false){
-            currentPlayer = player2;
-        }
-    
-        if (player2.played === true && player1.played === false){
-            currentPlayer = player1;
-        } */
-    
-    
-        function endGame(){
-            player1.played = true;
-            player2.played = true;
-            currentPlayer = '';
+        
+    function endGame(){
+        player1.played = true;
+        player2.played = true;
+        currentPlayer = '';
         }
 
 
@@ -144,6 +155,25 @@ const displayController = (() => {
             gameController.gameBoard.boardArr[i][j].addEventListener('click', (e) => {
                 gameController.currentPlayer.playSign(e.target);
                 
+                if (gameController.checkWinner.isWinner){
+                    console.log('we have a winner')
+
+                    if (gameController.currentPlayer == player1){
+                        player1.score += 1;
+                        playerOneScore.textContent = gameController.currentPlayer.score;
+                    }
+
+                    if (currentPlayer == player2){
+                        player2.score += 1;
+                        playerTwoScore.textContent = gameController.currentPlayer.score;
+                    }
+                    
+                    //end game
+                    gameController.endGame();
+                    
+                    //display winner
+                    displayWinner();
+                }
 
                 if (gameController.currentPlayer === player1){
                     player1.played = true;
@@ -159,23 +189,7 @@ const displayController = (() => {
                 console.log(gameController.currentPlayer);
                 
 
-                if (gameController.checkWinner.isWinner){
-                    gameController.currentPlayer.score += 1;
 
-                    if (gameController.currentPlayer == player1){
-                        playerOneScore.textContent = gameController.currentPlayer.score;
-                    }
-
-                    if (currentPlayer == player2){
-                        playerTwoScore.textContent = gameController.currentPlayer.score;
-                    }
-                    
-                    //end game
-                    gameController.endGame();
-                    
-                    //display winner
-                    displayWinner();
-                }
             })
         }
     }
