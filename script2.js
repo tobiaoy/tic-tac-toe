@@ -59,48 +59,49 @@ const checkWinner = (() => {
     const horCheck = () => {
         if (gameBoard.boardArr[0][0].textContent !== '' && gameBoard.boardArr[0][0].textContent !== undefined) {
             if (gameBoard.boardArr[0][0].textContent === gameBoard.boardArr[0][1].textContent && gameBoard.boardArr[0][1].textContent === gameBoard.boardArr[0][2].textContent) {
-                horizontalWin = true;
                 setRoundWinner(gameBoard.boardArr[0][0].textContent);
+                return true;
             }
         } else if (gameBoard.boardArr[1][0].textContent !== '' && gameBoard.boardArr[1][0].textContent !== undefined){
             if (gameBoard.boardArr[1][0].textContent === gameBoard.boardArr[1][1].textContent && gameBoard.boardArr[1][1].textContent === gameBoard.boardArr[1][2].textContent) {
-                horizontalWin = true;
                 setRoundWinner(gameBoard.boardArr[1][0].textContent);
+                return true;
             }
         } else if (gameBoard.boardArr[2][0].textContent !== '' && gameBoard.boardArr[2][0].textContent !== undefined){
             if (gameBoard.boardArr[2][0].textContent === gameBoard.boardArr[2][1].textContent && gameBoard.boardArr[2][1].textContent === gameBoard.boardArr[2][2].textContent){
-                horizontalWin = true;
+                
                 setRoundWinner(roundWinner = gameBoard.boardArr[2][0].textContent);
+                return true;
             }
         } else {
-            horizontalWin = false;
+            return false;
         }
 
-        return horizontalWin;
+        //return horizontalWin;
     }
 
     //vertical win check
     const verCheck = () => {
         if (gameBoard.boardArr[0][0].textContent !== '' && gameBoard.boardArr[0][0].textContent !== undefined){
             if (gameBoard.boardArr[0][0].textContent === gameBoard.boardArr[1][0].textContent && gameBoard.boardArr[1][0].textContent === gameBoard.boardArr[2][0].textContent){
-                verticalWin = true;
                 setRoundWinner(gameBoard.boardArr[0][0].textContent);
+                return true;
             }
         } else if (gameBoard.boardArr[0][1].textContent !== '' && gameBoard.boardArr[0][1].textContent !== undefined){
             if (gameBoard.boardArr[0][1].textContent === gameBoard.boardArr[1][1].textContent && gameBoard.boardArr[1][1].textContent === gameBoard.boardArr[2][1].textContent){
-                verticalWin = true;
                 setRoundWinner(gameBoard.boardArr[0][1].textContent);
+                return true;
             }
         } else if (gameBoard.boardArr[0][2].textContent !== '' && gameBoard.boardArr[0][2].textContent !== undefined){
             if (gameBoard.boardArr[0][2].textContent === gameBoard.boardArr[1][2].textContent && gameBoard.boardArr[1][2].textContent === gameBoard.boardArr[2][2].textContent){
-                verticalWin = true;
                 setRoundWinner(gameBoard.boardArr[0][2].textContent);
+                return true;
             }
         } else {
-            verticalWin = false;
+            return false;
         }
 
-        return verticalWin;
+        //return verticalWin;
 
     }
 
@@ -111,14 +112,14 @@ const checkWinner = (() => {
                 gameBoard.boardArr[1][1].textContent === gameBoard.boardArr[2][2].textContent) || 
                 (gameBoard.boardArr[0][2].textContent === gameBoard.boardArr[1][1].textContent && 
                 gameBoard.boardArr[2][0].textContent === gameBoard.boardArr[1][1].textContent)){
-                diagonalWin = true;
                 setRoundWinner(gameBoard.boardArr[1][1].textContent);
+                return true;
             }   else {
-                    diagonalWin = false;
+                    return false;
                 } 
         }
 
-        return diagonalWin;
+        //return diagonalWin;
 
     }
 
@@ -126,17 +127,12 @@ const checkWinner = (() => {
     //let isWinner = horizontalWin ? true : verticalWin ? true : diagonalWin ? true : false;
 
     const isWinner = () => {
-        let win = false;
-
-        if (horCheck()){ 
-            win = true 
-        }  else if (verCheck()) { 
-            win = true 
-        } else if (diaCheck()) { 
-            win = true 
+        if (horCheck() || verCheck() || diaCheck()){
+            return true;
+        } else {
+            return false;
         }
-
-        return win;
+         
 }
 
     return {isWinner, setRoundWinner}
@@ -170,7 +166,8 @@ const displayController = (() => {
     const winOverlay = document.querySelector('#win-overlay');
     const winMessage = document.querySelector('#win-message');
     const displayBoard = document.querySelector('#game-board'); //display version of the game board
-    document.querySelector('#curr-player').textContent = `current player: ${gameFlow.currentPlayer}`; //displays the current player
+    const currPlayer = document.querySelector('#curr-player');
+    currPlayer.textContent = `current player: ${gameFlow.currentPlayer}`; //displays the current player -> will change to name later
     const playerOneScore = document.querySelector('.player1-score'); //displays player 1's score
     const playerTwoScore = document.querySelector('.player2-score'); //displays player 2's score
 
@@ -179,55 +176,42 @@ const displayController = (() => {
         displayBoard.appendChild(gameBoard.frame);
     })();
 
-
-    //add event listeners to cells
-    for (let i = 0; i < 3; i++){
-        for (let j = 0; j < 3; j++){
-
-            gameBoard.boardArr[i][j].addEventListener('click', (e) => {
-                gameFlow.currentPlayer.playSign(e.target);
-                
-                if (checkWinner.isWinner()){
-                    console.log('we have a winner')
-                    //winMessage.textContent = `${checkWinner.setRoundWinner(e.target.textContent)} wins the game`
-                    gameFlow.currentRound += 1;
-
-                    if (gameFlow.currentPlayer == player1){
-                        player1.score += 1;
-                        playerOneScore.textContent = `Player 1 score: ${gameFlow.currentPlayer.score}`;
-                    }
-
-                    if (gameFlow.currentPlayer == player2){
-                        player2.score += 1;
-                        playerTwoScore.textContent = `Player 2 score: ${gameFlow.currentPlayer.score}`;
-                    }
-
-                    
-                    //end game
-                    //gameFlow.endGame();
-                    
-                    //display winner
-                    displayWinOverlay();
-
-                } else if (!checkWinner.isWinner()){
-
-                    if (gameFlow.currentPlayer === player1){
-                        player1.played = true;
-                        player2.played = false;
-                        gameFlow.currentPlayer = player2;
-
-                    } else if (gameFlow.currentPlayer === player2)  {
-                        player2.played = true;
-                        player1.played = false;
-                        gameFlow.currentPlayer = player1;
-                    }
-            }
-
-                console.log(gameFlow.currentPlayer);
-                
-            })
+    const play = (e) => {
+        e.preventDefault();
+        gameFlow.currentPlayer.playSign(e.target)
+        
+        if (!checkWinner.isWinner()){
+        if (gameFlow.currentPlayer === player1){
+            player1.played = true;
+            player2.played = false;
+            gameFlow.currentPlayer = player2;
+    
+        } else if (gameFlow.currentPlayer === player2)  {
+            player2.played = true;
+            player1.played = false;
+            gameFlow.currentPlayer = player1;
         }
     }
+    
+    }
+
+    const winSequence = (e) => {
+        e.preventDefault();
+        winMessage.textContent = `${checkWinner.setRoundWinner(e.target.textContent)} wins the game`; //change win message based on the winner
+        gameFlow.currentRound +=1; //increment the round count
+        displayWinOverlay(); //display win screen
+        
+        //increment winning player's score
+        if (gameFlow.currentPlayer === player1){
+            player1.score +=1;
+            playerOneScore.textContent = `Player 1 score: ${gameFlow.currentPlayer.score}`;
+        } else if (gameFlow.currentPlayer === player2){
+            player2.score +=1;
+            playerTwoScore.textContent = `Player 2 score: ${gameFlow.currentPlayer.score}`;
+        
+        }
+    }
+
 
     const displayWinOverlay = () => {
             winOverlay.style.display = 'flex';
@@ -237,6 +221,22 @@ const displayController = (() => {
         winOverlay.style.display = 'none';
         gameFlow.resetGame();
     })
+
+
+    //add event listeners to all the cells
+    for (let i = 0; i < 3; i++){
+        for (let j = 0; j < 3; j++){
+            gameBoard.boardArr[i][j].addEventListener('click', (e) => {
+                if (!checkWinner.isWinner()){
+                    play(e);
+                } 
+                
+                if (checkWinner.isWinner()){
+                    winSequence(e);
+                }
+            })
+        }
+    }
 
     return {
         displayBoard,
