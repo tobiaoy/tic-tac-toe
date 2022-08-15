@@ -157,6 +157,11 @@ const checkWinner = (() => {
     return {isWinner, setRoundWinner}
 })()
 
+
+
+
+
+//check draw module
 const checkDraw = (() => {
 
     const checkFull = () => {
@@ -166,7 +171,9 @@ const checkDraw = (() => {
             for (let j = 0; j < 3; j++){
                 if (gameBoard.getCell(i,j) !== '' && gameBoard.getCell(i,j) !== undefined){
                     isFull = true;
-                } else if (gameBoard.getCell(i,j) === '' || gameBoard.getCell(i,j) == undefined){
+                }  
+                
+                if (gameBoard.getCell(i,j) === '' || gameBoard.getCell(i,j) === undefined){
                     isFull = false;
                 }
             }
