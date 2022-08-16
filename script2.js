@@ -29,14 +29,13 @@ const gameBoard = (()=>{
         //add event listeners from the display controller
         let cell = boardArr[i][j];
         cell.addEventListener('click', (e) => {
-            if (!checkWinner.isWinner()){
+            if (!checkWinner.isWinner() && !checkDraw.isDraw()){
                 displayController.play(i,j);
             }
 
             if (checkWinner.isWinner()){
                 displayController.winSequence(e);
-            }
-
+            }  
             if(checkDraw.isDraw()){
                 displayController.drawSequence(e);
             }
@@ -78,83 +77,103 @@ const gameBoard = (()=>{
 
 //win checking module
 const checkWinner = (() => {
+    /*
+	let a = gameBoard.getCell(0,0)
+	let b = gameBoard.getCell(0,1)
+	let c = gameBoard.getCell(0,2)
+	let d = gameBoard.getCell(1,0)
+	let e = gameBoard.getCell(1,1)
+	let f = gameBoard.getCell(1,2)
+	let g = gameBoard.getCell(2,0)
+	let h = gameBoard.getCell(2,1)
+	let i = gameBoard.getCell(2,2)
+    */
 
-    const setRoundWinner = (x) => {
+	const falsy = [undefined, '']
+	
+	const setRoundWinner = (x) => {
          let roundWinner = x;
         return roundWinner;
     }
-    
-    //horizontal win check
-    const horCheck = () => {
-        if (gameBoard.getCell(0,0) !== '' && gameBoard.getCell(0,0) !== undefined){
-            if (gameBoard.getCell(0,0) === gameBoard.getCell(0,1) && gameBoard.getCell(0,1) === gameBoard.getCell(0,2)) {
-                setRoundWinner(gameBoard.getCell(0,0));
+	
+	const vertCheck = () => {
+		if ((!falsy.includes(gameBoard.getCell(0,0))) && (!falsy.includes(gameBoard.getCell(1,0))) && (!falsy.includes(gameBoard.getCell(2,0)))){
+			if (gameBoard.getCell(0,0) === gameBoard.getCell(1,0) && gameBoard.getCell(1,0) === gameBoard.getCell(2,0)){
+				setRoundWinner(gameBoard.getCell(0,0))
                 return true;
-            }
-        } else if (gameBoard.getCell(1,0) && gameBoard.getCell(1,0) !== undefined){
-            if (gameBoard.getCell(1,0) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(1,2)) {
-                setRoundWinner(gameBoard.getCell(1,0));
+			}
+		} else if ((!falsy.includes(gameBoard.getCell(0,1))) && (!falsy.includes(gameBoard.getCell(1,1))) && (!falsy.includes(gameBoard.getCell(2,1)))){
+			if (gameBoard.getCell(0,1) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(2,1)){
+				setRoundWinner(gameBoard.getCell(0,1));
                 return true;
-            }
-        } else if (gameBoard.getCell(2,0) !== '' && gameBoard.getCell(2,0) !== undefined){
-            if (gameBoard.getCell(2,0) === gameBoard.getCell(2,1) && gameBoard.getCell(2,1) === gameBoard.getCell(2,2)){
-                setRoundWinner(roundWinner = gameBoard.getCell(2,0));
+			}
+		} else if ((!falsy.includes(gameBoard.getCell(0,2))) && (!falsy.includes(gameBoard.getCell(1,2))) && (!falsy.includes(gameBoard.getCell(2,2)))){
+			if (gameBoard.getCell(0,2) === gameBoard.getCell(1,2) && gameBoard.getCell(1,2) === gameBoard.getCell(2,2)){
+				setRoundWinner(gameBoard.getCell(0,2));
                 return true;
-            }
-        } else {
+			}
+		} else {
             return false;
         }
-        
-    }
-
-    //vertical win check
-    const verCheck = () => {
-        if (gameBoard.getCell(0,0) && gameBoard.getCell(0,0) !== undefined){
-            if (gameBoard.getCell(0,0) === gameBoard.getCell(1,0) && gameBoard.getCell(1,0) === gameBoard.getCell(2,0)){
-                setRoundWinner(gameBoard.getCell(0,0));
+	}
+	
+	const horCheck = () => {
+		if ((!falsy.includes(gameBoard.getCell(0,0))) && (!falsy.includes(gameBoard.getCell(0,1))) && (!falsy.includes(gameBoard.getCell(0,2)))){
+			if (gameBoard.getCell(0,0) === gameBoard.getCell(0,1) && gameBoard.getCell(0,1) === gameBoard.getCell(0,2)){
+				setRoundWinner(gameBoard.getCell(0,0))
                 return true;
-            }
-        } else if (gameBoard.getCell(0,1) !== '' && gameBoard.getCell(0,1) !== undefined){
-            if (gameBoard.getCell(0,1) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(2,1)){
-                setRoundWinner(gameBoard.getCell(0,1));
+			}
+		} else if ((!falsy.includes(gameBoard.getCell(1,0))) && (!falsy.includes(gameBoard.getCell(1,1))) && (!falsy.includes(gameBoard.getCell(1,2)))){
+			if (gameBoard.getCell(1,0) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(1,2)){
+				setRoundWinner(gameBoard.getCell(1,0));
                 return true;
-            }
-        } else if (gameBoard.getCell(0,2) !== '' && gameBoard.getCell(0,2) !== undefined){
-            if (gameBoard.getCell(0,2) === gameBoard.getCell(1,2) && gameBoard.getCell(1,2) === gameBoard.getCell(2,2)){
-                setRoundWinner(gameBoard.getCell(0,2));
+			}
+		} else if ((!falsy.includes(gameBoard.getCell(2,0))) && (!falsy.includes(gameBoard.getCell(2,1))) && (!falsy.includes(gameBoard.getCell(2,2)))){
+			if (gameBoard.getCell(2,0) === gameBoard.getCell(2,1) && gameBoard.getCell(2,1) === gameBoard.getCell(2,2)){
+				setRoundWinner(gameBoard.getCell(2,0));
                 return true;
-            }
-        } else {
+			}
+		} else {
             return false;
         }
-    }
+		
 
-    //diagonal win check
-    const diaCheck = () => {
-        if (gameBoard.getCell(1,1) !== '' && gameBoard.getCell(1,1) !== undefined){
-            if (gameBoard.getCell(0,0) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(2,2)){
-                setRoundWinner(gameBoard.getCell(1,1));
+	}
+	
+	const diagCheck = () => {
+		if ((!falsy.includes(gameBoard.getCell(0,0))) && (!falsy.includes(gameBoard.getCell(1,1))) && (!falsy.includes(gameBoard.getCell(2,2)))){
+			if (gameBoard.getCell(0,0) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(2,2)){
+				setRoundWinner(gameBoard.getCell(1,1));
                 return true;
-            } else if (gameBoard.getCell(0,2) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(2,0)){
-                setRoundWinner(gameBoard.getCell(1,1));
+			} 
+		} else if ((!falsy.includes(gameBoard.getCell(0,2))) && (!falsy.includes(gameBoard.getCell(1,1))) && (!falsy.includes(gameBoard.getCell(2,0)))){
+			if (gameBoard.getCell(0,2) === gameBoard.getCell(1,1) && gameBoard.getCell(1,1) === gameBoard.getCell(2,0)){
+				setRoundWinner(gameBoard.getCell(1,1));
                 return true;
-            } else {
-                    return false;
-                } 
+			}
+		}
+		
+	}
+	
+	const isWinner = () => {
+		let win = false;
+		
+		if (vertCheck()) {
+			win = true;
+		} else if (horCheck()){
+			win = true;
+		} else if (diagCheck()){
+			win = true;
+		} else {
+            win = false;
         }
-    }
-
-    //check if there's a winner
-    const isWinner = () => {
-        if (horCheck() || verCheck() || diaCheck()){
-            return true;
-        } else {
-            return false;
-        }
-         
-}
-
-    return {isWinner, setRoundWinner}
+		
+		return win;
+		
+	}
+	
+	return {setRoundWinner, isWinner, horCheck, vertCheck, diagCheck}
+	
 })()
 
 
@@ -171,8 +190,12 @@ const checkDraw = (() => {
             for (let j = 0; j < 3; j++){
                 if (gameBoard.getCell(i,j) !== '' && gameBoard.getCell(i,j) !== undefined){
                     isFull = true;
-                }  
-                
+                }
+            }
+        }
+
+        for (let i = 0; i < 3; i++){
+            for (let j = 0; j < 3; j++){
                 if (gameBoard.getCell(i,j) === '' || gameBoard.getCell(i,j) === undefined){
                     isFull = false;
                 }
@@ -189,6 +212,8 @@ const checkDraw = (() => {
             } else {
                 return true;
             }
+        } else {
+            return false;
         }
     }
 
@@ -215,6 +240,9 @@ const gameFlow = (() => {
     }
 })()
 
+
+
+
 //display controller
 const displayController = (() => {
     const resetBtn = document.querySelector('#reset-btn')
@@ -232,8 +260,6 @@ const displayController = (() => {
     })();
 
     const play = (i,j) => {
-        //e.preventDefault();
-        //gameFlow.currentPlayer.playSign(e.target)
         let sign = gameFlow.currentPlayer.getSign();
         gameBoard.setCell(sign,i,j);
 
@@ -254,7 +280,7 @@ const displayController = (() => {
     }
 
     const winSequence = (e) => {
-        e.preventDefault();
+        //e.preventDefault();
         winMessage.textContent = `${checkWinner.setRoundWinner(e.target.textContent)} wins the game`; //change win message based on the winner
         gameFlow.currentRound +=1; //increment the round count
         displayWinOverlay(); //display win screen
@@ -288,23 +314,6 @@ const displayController = (() => {
         gameBoard.resetBoard();
     })
 
-
-    //add event listeners to all the cells
-    /*
-    for (let i = 0; i < 3; i++){
-        for (let j = 0; j < 3; j++){
-            gameBoard.boardArr[i][j].addEventListener('click', (e) => {
-                if (!checkWinner.isWinner()){
-                    play(e);
-                } 
-                
-                if (checkWinner.isWinner()){
-                    winSequence(e);
-                }
-            })
-        }
-    }
-    */
 
     return {
         displayBoard,
