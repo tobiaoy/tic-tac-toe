@@ -29,14 +29,15 @@ const gameBoard = (()=>{
         //add event listeners from the display controller
         let cell = boardArr[i][j];
         cell.addEventListener('click', (e) => {
-            if (!checkWinner.isWinner() && !checkDraw.isDraw()){
+
+            if (!checkWinner.isWinner() && !checkDraw.isDraw() && !gameFlow.gameEnded){
                 displayController.play(i,j);
             }
 
-            if (checkWinner.isWinner()){
+            if (checkWinner.isWinner() && !gameFlow.gameEnded){
                 displayController.winSequence(e);
             }  
-            if(checkDraw.isDraw()){
+            if(checkDraw.isDraw() && !gameFlow.gameEnded){
                 displayController.drawSequence(e);
             }
         })
@@ -77,17 +78,6 @@ const gameBoard = (()=>{
 
 //win checking module
 const checkWinner = (() => {
-    /*
-	let a = gameBoard.getCell(0,0)
-	let b = gameBoard.getCell(0,1)
-	let c = gameBoard.getCell(0,2)
-	let d = gameBoard.getCell(1,0)
-	let e = gameBoard.getCell(1,1)
-	let f = gameBoard.getCell(1,2)
-	let g = gameBoard.getCell(2,0)
-	let h = gameBoard.getCell(2,1)
-	let i = gameBoard.getCell(2,2)
-    */
 
 	const falsy = [undefined, '']
 	
@@ -225,6 +215,7 @@ const checkDraw = (() => {
 const gameFlow = (() => {
     let currentPlayer = player1;
     let currentRound = 1;
+    let gameEnded = false;
 
     const endGame = () => {
         //what to do here?
@@ -235,7 +226,7 @@ const gameFlow = (() => {
 
 
     return {currentPlayer, 
-        endGame, 
+        gameEnded, 
         currentRound
     }
 })()
@@ -246,6 +237,7 @@ const gameFlow = (() => {
 //display controller
 const displayController = (() => {
     const resetBtn = document.querySelector('#reset-btn')
+    const quitBtn = document.querySelector('#quit-btn')
     const winOverlay = document.querySelector('#win-overlay');
     const winMessage = document.querySelector('#win-message');
     const displayBoard = document.querySelector('#game-board'); //display version of the game board
@@ -312,6 +304,12 @@ const displayController = (() => {
     resetBtn.addEventListener('click', () => {
         winOverlay.style.display = 'none';
         gameBoard.resetBoard();
+        gameFlow.gameEnded = false;
+    })
+    
+    quitBtn.addEventListener('click', () => {
+        winOverlay.style.display = 'none';
+        gameFlow.gameEnded = true;
     })
 
 
