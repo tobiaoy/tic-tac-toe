@@ -8,20 +8,40 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- title of the game -->
-    <h2 id="game-title">Tic Tac Toe</h2>
+    <p id='title'>Tic-Tac-Toe</p>
 
-    <!-- Current Player: {current player sign}  -->   
-    <h3 id="curr-player">Current Player: </h3>
-
-    <!-- Game board -->
-    <div id="game-board">
-
+    <div id='main'>
+      
+      <div id= 'p1-box' class = 'player-box'>
+        <input id = 'p1-name' placeholder='Player 1 (X)'></input>
+      <div id='p1-track' class = 'player-tracker'>
+      <p id='p1-score-title'>Score:</p>
+      <p id = 'p1-score' class = 'p-score'>0</p>
+      </div>
+      </div>
+    
+      <div id = 'game-board'>
+        <div id ='display-board'>
+        </div>
+      </div>
+    
+      <div id = 'p2-box' class = 'player-box'>
+            <input id = 'p2-name' placeholder='Player 2 (O)'></input>
+      <div id='p2-track' class = 'player-tracker'>
+      <p id='p2-score-title'>Score:</p>
+      <p id = 'p2-score' class = 'p-score'>0</p>
+      </div>
+      </div>
+    
     </div>
-    <!-- Scores -->
-    <div id="score-board">
-        <p class="player1-score">Player 1 Score: </p>
-        <p class="player2-score"> Player 2 Score: </p>
+    
+    <div id = 'support'>
+      <p id='curr-player'>Current Player: </p>
+      <p id='curr-round'>Current Round: 1 </p>
+      <div id ='support-btns'>
+      <button id = 'restart-btn' class = 'support-btn'>Restart</button>
+      <button id = 'quit-btn2' class='support-btn'>Quit</button>
+    </div>
     </div>
 
     <!-- Win Overlay -->

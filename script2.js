@@ -3,14 +3,25 @@ const player = (sign) => {
     const getSign  = () => {return sign}
     let played = false; // for when someone has just played a move
     let score = 0;
+    let name;
+
+    /*
+    const setName = (x) => {
+        let name = x;
+        return name;
+    }
+    */
     
-    return {getSign, played, score}
+    return {getSign, played, score, name}
 }
 
 
 //players --> to be modified later
 let player1 = player('X');
+player1.name = 'Player 1';
+
 let player2 = player('O');
+player2.name = 'Player 2'
 
 
 
@@ -36,8 +47,7 @@ const gameBoard = (()=>{
 
             if (checkWinner.isWinner() && !gameFlow.gameEnded){
                 displayController.winSequence(e);
-            }  
-            if(checkDraw.isDraw() && !gameFlow.gameEnded){
+            } else if(checkDraw.isDraw() && !gameFlow.gameEnded){
                 displayController.drawSequence(e);
             }
         })
@@ -217,13 +227,6 @@ const gameFlow = (() => {
     let currentRound = 1;
     let gameEnded = false;
 
-    const endGame = () => {
-        //what to do here?
-        currentPlayer = '';
-        player1.played = true;
-        player2.played = true;
-    }
-
 
     return {currentPlayer, 
         gameEnded, 
@@ -240,11 +243,33 @@ const displayController = (() => {
     const quitBtn = document.querySelector('#quit-btn')
     const winOverlay = document.querySelector('#win-overlay');
     const winMessage = document.querySelector('#win-message');
-    const displayBoard = document.querySelector('#game-board'); //display version of the game board
+    const displayBoard = document.querySelector('#display-board'); //display version of the game board
     const currPlayer = document.querySelector('#curr-player');
-    currPlayer.textContent = `current player: ${gameFlow.currentPlayer}`; //displays the current player -> will change to name later
-    const playerOneScore = document.querySelector('.player1-score'); //displays player 1's score
-    const playerTwoScore = document.querySelector('.player2-score'); //displays player 2's score
+    const currRound = document.querySelector('#curr-round');
+    //currPlayer.textContent = `current player: ${gameFlow.currentPlayer.name}`; //displays the current player -> will change to name later
+    const playerOneScore = document.querySelector('#p1-score'); //displays player 1's score
+    const playerTwoScore = document.querySelector('#p2-score'); //displays player 2's score
+    const playerOneName = document.querySelector('#p1-name');
+    const playerTwoName = document.querySelector('#p2-name');
+    const restartBtn = document.querySelector('#restart-btn');
+    const quitBtn2 = document.querySelector('#quit-btn2');
+
+
+    playerOneName.addEventListener('change', () => {
+        if (playerOneName.value === '' || playerOneName === undefined){
+            player1.name = 'Player 1'
+        } else {
+        player1.name = playerOneName.value
+        }
+    })
+
+    playerTwoName.addEventListener('change', () => {
+        if (playerTwoName.value === '' || playerTwoName === undefined){
+            player2.name = 'Player 2'
+        } else {
+         player2.name = playerTwoName.value;
+        }
+    });
 
     //figure out how to render the board and have it show updates when plays happen
     const renderBoard = (() => {
@@ -261,29 +286,45 @@ const displayController = (() => {
             player1.played = true;
             player2.played = false;
             gameFlow.currentPlayer = player2;
+            currPlayer.textContent = `Current Player: ${gameFlow.currentPlayer.name}`;
     
         } else if (gameFlow.currentPlayer === player2)  {
             player2.played = true;
             player1.played = false;
             gameFlow.currentPlayer = player1;
+            currPlayer.textContent = `Current Player: ${gameFlow.currentPlayer.name}`;
         }
     }
     
     }
 
     const winSequence = (e) => {
-        //e.preventDefault();
-        winMessage.textContent = `${checkWinner.setRoundWinner(e.target.textContent)} wins the game`; //change win message based on the winner
+
+        const setWinner = () => {
+            let winner;
+            let winSign = e.target.textContent;
+            let players = [player1, player2];
+
+            for (let i=0; i < 2; i++){
+                if (players[i].getSign() === winSign){
+                    winner = players[i].name;
+                }
+            }
+
+            return winner;
+        }
+
+        winMessage.textContent = `${setWinner()} wins the game`; //change win message based on the winner
         gameFlow.currentRound +=1; //increment the round count
         displayWinOverlay(); //display win screen
         
         //increment winning player's score
         if (gameFlow.currentPlayer === player1){
             player1.score +=1;
-            playerOneScore.textContent = `Player 1 score: ${gameFlow.currentPlayer.score}`;
+            playerOneScore.textContent = `${gameFlow.currentPlayer.score}`;
         } else if (gameFlow.currentPlayer === player2){
             player2.score +=1;
-            playerTwoScore.textContent = `Player 2 score: ${gameFlow.currentPlayer.score}`;
+            playerTwoScore.textContent = `${gameFlow.currentPlayer.score}`;
         
         }
     }
@@ -291,7 +332,7 @@ const displayController = (() => {
     const drawSequence = (e) => {
         e.preventDefault();
         winMessage.textContent = `It's a draw, no one wins the game`;
-        gameFlow.currentRound +=1;
+        gameFlow.currentRound +=1;         
         displayWinOverlay();
 
     }
@@ -304,11 +345,24 @@ const displayController = (() => {
     resetBtn.addEventListener('click', () => {
         winOverlay.style.display = 'none';
         gameBoard.resetBoard();
+        currRound.textContent = `Current Round: ${gameFlow.currentRound}`
         gameFlow.gameEnded = false;
     })
     
     quitBtn.addEventListener('click', () => {
         winOverlay.style.display = 'none';
+        gameFlow.gameEnded = true;
+    })
+
+    restartBtn.addEventListener('click', () => {
+        gameBoard.resetBoard();
+        gameFlow.currentRound = 1;
+        gameFlow.gameEnded = false;
+        player1.score = 0;
+        player2.score = 0;
+    })
+
+    quitBtn2.addEventListener('click', () => {
         gameFlow.gameEnded = true;
     })
 
