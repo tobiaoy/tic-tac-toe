@@ -5,12 +5,6 @@ const player = (sign) => {
     let score = 0;
     let name;
 
-    /*
-    const setName = (x) => {
-        let name = x;
-        return name;
-    }
-    */
     
     return {getSign, played, score, name}
 }
@@ -47,7 +41,8 @@ const gameBoard = (()=>{
 
             if (checkWinner.isWinner() && !gameFlow.gameEnded){
                 displayController.winSequence(e);
-            } else if(checkDraw.isDraw() && !gameFlow.gameEnded){
+            } 
+            if(checkDraw.isDraw() && !gameFlow.gameEnded){
                 displayController.drawSequence(e);
             }
         })
@@ -172,7 +167,7 @@ const checkWinner = (() => {
 		
 	}
 	
-	return {setRoundWinner, isWinner, horCheck, vertCheck, diagCheck}
+	return {setRoundWinner, isWinner}
 	
 })()
 
@@ -370,11 +365,7 @@ const displayController = (() => {
     })
 
     restartBtn.addEventListener('click', () => {
-        gameBoard.resetBoard();
-        gameFlow.currentRound = 1;
-        gameFlow.gameEnded = false;
-        player1.score = 0;
-        player2.score = 0;
+        window.location.reload();
     })
 
     quitBtn2.addEventListener('click', () => {
