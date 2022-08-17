@@ -253,6 +253,8 @@ const displayController = (() => {
     const playerTwoName = document.querySelector('#p2-name');
     const restartBtn = document.querySelector('#restart-btn');
     const quitBtn2 = document.querySelector('#quit-btn2');
+    const p1Box = document.querySelector('#p1-box');
+    const p2Box = document.querySelector('#p2-box');
 
 
     playerOneName.addEventListener('change', () => {
@@ -287,12 +289,25 @@ const displayController = (() => {
             player2.played = false;
             gameFlow.currentPlayer = player2;
             currPlayer.textContent = `Current Player: ${gameFlow.currentPlayer.name}`;
+
+            //switches to player 2;
+            p1Box.classList.remove('player-box-active');
+            p1Box.classList.add('player-box');
+            p2Box.classList.remove('player-box');
+            p2Box.classList.add('player-box-active');
+
     
         } else if (gameFlow.currentPlayer === player2)  {
             player2.played = true;
             player1.played = false;
             gameFlow.currentPlayer = player1;
             currPlayer.textContent = `Current Player: ${gameFlow.currentPlayer.name}`;
+
+            //switches to player 1
+            p2Box.classList.remove('player-box-active');
+            p2Box.classList.add('player-box');
+            p1Box.classList.remove('player-box');
+            p1Box.classList.add('player-box-active');
         }
     }
     

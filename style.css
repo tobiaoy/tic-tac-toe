@@ -70,6 +70,15 @@
      border-radius: 0.5rem;
      
    }
+
+   .player-box-active{
+    background-color: var(--green1);
+    padding: 2.5rem 1rem;
+    gap: 1rem;
+    border-radius: 0.5rem;
+    border-style: solid;
+    border-color: var(--sand);
+   }
    
    #game-board{
      grid-area: gameboard;
@@ -88,6 +97,8 @@
      align-items: center;
      gap: 0.5rem;
    }
+
+   
    
    input{
      padding: 0.5rem 0.75rem;
